@@ -1,30 +1,36 @@
 #!/usr/bin/python3
-"""
-starts a Flask web application
-"""
-
-from flask import Flask, render_template
-from models import *
-from models import storage
+from flask import Flask, render_template, request
 import requests
+import json
+
 app = Flask(__name__)
 
-params = {}
-result = requests.post('https://api.spoonacular.com')
+SPOONACULAR_API_KEY = '8ca7176f9710474688667f16c6faee9e'
 
 
-@app.route('/', strict_slashes=False)
-def cities_by_states():
-    """display the states and cities listed in alphabetical order"""
-    states = storage.all("State").values()
-    return render_template('index.html', result=result)
+def get_recipes(ingredients):
+    base_url = 'https://api.spoonacular.com/recipes/findByIngredients'
+    params = {
+        'apiKey': SPOONACULAR_API_KEY,
+        'ingredients': ','.join(ingredients),
+        'number': 10  # Number of recipes to retrieve
+    }
+
+    response = requests.get(base_url, params=params)
+    recipes = response.json()
+    return recipes
 
 
-@app.teardown_appcontext
-def teardown_db(exception):
-    """closes the storage on teardown"""
-    storage.close()
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    recipes = []
+
+    if request.method == 'POST':
+        ingredients = request.form['ingredients'].split(',')
+        recipes = get_recipes(ingredients)
+
+    return render_template('index.html', recipes=recipes)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
