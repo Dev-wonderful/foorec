@@ -27,7 +27,7 @@ class Recipe(BaseModel, Base):
     comments = []
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
         ratings = relationship("Rating", cascade='all, delete-orphan',
-                               backref="place")
+                               backref="recipe")
         amenities = relationship('User', secondary=favourite,
                                  backref='saved_recipes', viewonly=False)
     else:
