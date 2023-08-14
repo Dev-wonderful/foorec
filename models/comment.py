@@ -2,7 +2,7 @@
 """ holds class Comment"""
 import models
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, ForeignKey
 
 
 class Comment(BaseModel, Base):
@@ -10,6 +10,7 @@ class Comment(BaseModel, Base):
     if models.storage_t == 'db':
         __tablename__ = 'comments'
         text = Column(String(1024), nullable=False)
+        user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
     else:
         text = ""
 

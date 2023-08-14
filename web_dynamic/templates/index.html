@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+ <html>
+ <head>
+     <title>Recipe Search</title>
+     <style>
+         .rate {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: whitesmoke;
+            border: 1px solid gold;
+            text-align: center;
+            line-height: 30px;
+            cursor: pointer;
+         }
+     </style>
+ </head>
+ <body>
+    <h1>User Login</h1>
+    <form target="_blank" method="POST" action="/login">
+        <label for="username">
+            Username
+        </label>
+        <input id="username" name="username" type="text"/><br><br>
+        <label for="password">
+            Password
+        </label>
+        <input id="password" name="password" type="password"/><br><br>
+        <input type="submit"/>
+    </form>
+    <h1>Recipe Search</h1>
+     <form method="POST">
+         <label for="ingredients">
+             Enter ingredients (comma-separated):
+         </label><br>
+         <input type="text" name="ingredients" id="ingredients"><br>
+         <input type="submit" value="Search">
+     </form>
+     <h2>Recipes:</h2>
+
+     <ul>
+     {% for recipe in recipes %}
+         <li>
+             <h3>{{ recipe.title }}</h3>
+             <img src="{{ recipe.image }}"
+                  alt="{{ recipe.title }}"
+                  width="150"><br>
+             <p>
+                 Used Ingredients: {{ recipe.usedIngredients|join(', ') }}
+             </p>
+             <div class="rating">
+                 <p>Rate the recipe</p>
+                 Rating:
+                 <span class="rate"
+                       data-title="{{ recipe.title }}"
+                       data-id="{{ recipe.id }}"
+                       data-rating="1">1</span>
+                 <span class="rate"
+                       data-title="{{ recipe.title }}"
+                       data-id="{{ recipe.id }}"
+                       data-rating="2">2</span>
+                 <span class="rate"
+                       data-title="{{ recipe.title }}"
+                       data-id="{{ recipe.id }}"
+                       data-rating="3">3</span>
+                 <span class="rate"
+                       data-title="{{ recipe.title }}"
+                       data-id="{{ recipe.id }}"
+                       data-rating="4">4</span>
+                 <span class="rate"
+                       data-title="{{ recipe.title }}"
+                       data-id="{{ recipe.id }}"
+                       data-rating="5">5</span>
+             </div>
+         </li>
+     {% endfor %}
+     </ul>
+    <script>
+        rating = document.querySelector('.rating')
+        rating.addEventListener('click', function(e){
+            console.log('clicked', +e.target.dataset.rating)
+            rates = document.querySelectorAll('.rate')
+            // reset the Background if clicked again
+            for (let i = 0; i < rates.length; i++) {
+                rates[i].style.backgroundColor = 'whitesmoke'
+            }
+            // set the Background for only affected ones
+            for (let i = 0; i < +e.target.dataset.rating; i++) {
+                rates[i].style.backgroundColor = 'gold'
+            }
+            fetch('http://localhost:5000/rating', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'rating': +e.target.dataset.rating,
+                    'recipe_id': e.target.dataset.id,
+                    'recipe_title': e.target.dataset.title
+                }),
+                headers: {'Content-type': 'application/json'}
+            }).then((response) => {
+                if (!response.ok) {
+                    alert('You need to sign up or Login')
+                    // reset
+                    for (let i = 0; i < rates.length; i++) {
+                        rates[i].style.backgroundColor = 'whitesmoke'
+                    }
+                }
+            })
+        })
+    </script>
+ </body>
+ </html>

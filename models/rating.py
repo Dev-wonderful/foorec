@@ -13,7 +13,7 @@ class Rating(BaseModel, Base):
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
         rating = Column(Integer, nullable=False)
     else:
-        place_id = ""
+        recipe_id = ""
         user_id = ""
         rating = ""
 

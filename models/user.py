@@ -15,7 +15,6 @@ class User(BaseModel, Base):
         password = Column(String(128), nullable=False)
         ratings = relationship("Rating", backref="user", cascade="delete")
         comments = relationship("Comment", backref="user", cascade="delete")
-        favourites = relationship("Favourite", backref="user", cascade="delete")
     else:
         username = ""
         password = ""

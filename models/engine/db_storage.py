@@ -79,6 +79,10 @@ class DBStorage:
             return self.__session.query(cls).filter_by(id=cls_id).first()
         return None
 
+    def get_user(self, username):
+        """ Retrieves an object from the database. """
+        return self.__session.query(User).filter_by(username=username).first()
+
     def count(self, cls=None):
         """ Counts the number of objects in storage. """
         if cls is None or cls in classes.keys() or cls in classes.values():

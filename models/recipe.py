@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship
 from models.rating import Rating
 import models
 
-favourite = Table(
+Favourite = Table(
     'favourite',
     Base.metadata,
     Column('user_id', String(60), ForeignKey('users.id'),
@@ -25,11 +25,11 @@ class Recipe(BaseModel, Base):
     title = Column(String(128), nullable=False)
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
     comments = []
-    if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+    if os.getenv('HBNB_TYPE_STORAGE', 'db') == 'db':
         ratings = relationship("Rating", cascade='all, delete-orphan',
                                backref="recipe")
-        amenities = relationship('User', secondary=favourite,
-                                 backref='saved_recipes', viewonly=False)
+        favourites = relationship('User', secondary=Favourite,
+                                  backref='saved_recipes', viewonly=False)
     else:
         @property
         def ratings(self):
